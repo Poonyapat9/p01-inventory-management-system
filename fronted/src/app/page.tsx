@@ -95,15 +95,18 @@ export default function HomePage() {
         {/* Left Content */}
         <div className="space-y-6">
           <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-            Inventory<br />
-            Management<br />
+            Inventory
+            <br />
+            Management
+            <br />
             <span className="text-orange-500">Simplified.</span>
           </h1>
-          
+
           <p className="text-gray-500 text-lg max-w-md">
-            Track products, manage requests, and get real-time notifications with StockMe. The modern solution for your warehouse needs.
+            Track products, manage requests, and get real-time notifications
+            with StockMe. The modern solution for your warehouse needs.
           </p>
-          
+
           {!isAuthenticated ? (
             <div className="flex gap-4 pt-4">
               <button
@@ -145,7 +148,7 @@ export default function HomePage() {
             </div>
           )}
         </div>
-        
+
         {/* Right Image */}
         <div className="relative lg:justify-self-end">
           <div className="relative bg-orange-100 rounded-2xl p-4 transform rotate-2 shadow-lg">
@@ -155,7 +158,8 @@ export default function HomePage() {
                 alt="Warehouse Management"
                 className="w-full h-80 lg:h-96 object-cover"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="800" height="600"%3E%3Crect width="800" height="600" fill="%234a5568"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="%23ffffff"%3EWarehouse%3C/text%3E%3C/svg%3E';
+                  (e.target as HTMLImageElement).src =
+                    'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="800" height="600"%3E%3Crect width="800" height="600" fill="%234a5568"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="%23ffffff"%3EWarehouse%3C/text%3E%3C/svg%3E';
                 }}
               />
             </div>

@@ -121,9 +121,7 @@ const NotificationsPage: React.FC = () => {
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
-              Notifications
-            </h1>
+            <h1 className="text-3xl font-bold text-gray-900">Notifications</h1>
           </div>
         </div>
 
@@ -154,12 +152,9 @@ const NotificationsPage: React.FC = () => {
                   </p>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-500">
-                      {formatDistanceToNow(
-                        new Date(notification.createdAt),
-                        {
-                          addSuffix: true,
-                        }
-                      )}
+                      {formatDistanceToNow(new Date(notification.createdAt), {
+                        addSuffix: true,
+                      })}
                     </span>
                     {!notification.isRead && (
                       <span className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-cyan-300 text-gray-900">
