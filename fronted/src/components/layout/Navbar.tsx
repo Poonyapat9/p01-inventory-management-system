@@ -12,6 +12,7 @@ const Navbar: React.FC = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  const { unreadCount } = useAppSelector((state) => state.notification);
 
   const handleLogout = async () => {
     try {
@@ -45,12 +46,25 @@ const Navbar: React.FC = () => {
                 Products
               </Link>
               {isAuthenticated && (
-                <Link
-                  href="/requests"
-                  className="hover:text-primary-100 transition-colors px-3 py-2 rounded-md"
-                >
-                  Requests
-                </Link>
+                <>
+                  <Link
+                    href="/requests"
+                    className="hover:text-primary-100 transition-colors px-3 py-2 rounded-md"
+                  >
+                    Requests
+                  </Link>
+                  <Link
+                    href="/notifications"
+                    className="hover:text-primary-100 transition-colors px-3 py-2 rounded-md relative"
+                  >
+                    Notifications
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
+                        {unreadCount > 9 ? "9+" : unreadCount}
+                      </span>
+                    )}
+                  </Link>
+                </>
               )}
             </div>
           </div>

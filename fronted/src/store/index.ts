@@ -13,6 +13,7 @@ import storage from "@/lib/storage";
 import authReducer from "./slices/authSlice";
 import productReducer from "./slices/productSlice";
 import requestReducer from "./slices/requestSlice";
+import notificationReducer from "./slices/notificationSlice";
 
 const persistConfig = {
   key: "root",
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   product: productReducer,
   request: requestReducer,
+  notification: notificationReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

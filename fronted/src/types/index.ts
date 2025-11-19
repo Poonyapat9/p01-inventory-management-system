@@ -37,6 +37,13 @@ export interface ProductState {
   error: string | null;
 }
 
+export interface ActivityLog {
+  action: "created" | "updated" | "deleted";
+  performedBy: string | User;
+  performedAt: string;
+  details?: string;
+}
+
 export interface Request {
   _id: string;
   transactionDate: string;
@@ -44,6 +51,10 @@ export interface Request {
   itemAmount: number;
   user: string | User;
   product_id: string | Product;
+  lastModifiedBy?: string | User;
+  deletedBy?: string | User;
+  deletedAt?: string;
+  activityLog?: ActivityLog[];
   createdAt: string;
   updatedAt: string;
 }
@@ -86,9 +97,39 @@ export interface CreateRequestData {
   product_id: string;
 }
 
+export interface Notification {
+  _id: string;
+  recipient: string | User;
+  sender: string | User;
+  type: "request_updated" | "request_deleted" | "request_created";
+  title: string;
+  message: string;
+  relatedRequest?: string;
+  relatedProduct?: string | Product;
+  isRead: boolean;
+  readAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NotificationState {
+  notifications: Notification[];
+  unreadCount: number;
+  loading: boolean;
+  error: string | null;
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;
   error?: string;
   token?: string;
+  message?: string;
+  notification?: {
+    action: string;
+    performedBy: string;
+    performedByRole: string;
+    requestOwner: string;
+    timestamp: string;
+  };
 }

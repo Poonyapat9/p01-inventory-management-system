@@ -28,6 +28,34 @@ const RequestSchema = new mongoose.Schema(
       ref: "Product",
       required: true,
     },
+    lastModifiedBy: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+    },
+    deletedBy: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+    },
+    deletedAt: {
+      type: Date,
+    },
+    activityLog: [
+      {
+        action: {
+          type: String,
+          enum: ["created", "updated", "deleted"],
+        },
+        performedBy: {
+          type: mongoose.Schema.ObjectId,
+          ref: "User",
+        },
+        performedAt: {
+          type: Date,
+          default: Date.now,
+        },
+        details: String,
+      },
+    ],
   },
   {
     timestamps: true,

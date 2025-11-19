@@ -1,5 +1,7 @@
 const Request = require("../models/Request");
 const Product = require("../models/Product");
+const Notification = require("../models/Notification");
+const User = require("../models/User");
 
 // @desc    Get all requests (Admin only) or user's own requests (Staff)
 // @route   GET /api/v1/requests
@@ -105,11 +107,46 @@ exports.createRequest = async (req, res, next) => {
     const request = await Request.create({
       ...req.body,
       user: req.user.id,
+      activityLog: [
+        {
+          action: "created",
+          performedBy: req.user.id,
+          performedAt: new Date(),
+          details: `Created by ${req.user.role}`,
+        },
+      ],
     });
+
+    const populatedRequest = await Request.findById(request._id)
+      .populate("user", "name email role")
+      .populate("product_id", "name sku category stockQuantity");
+
+    // If staff creates a request, notify all admins
+    if (req.user.role === "staff") {
+      const admins = await User.find({ role: "admin" });
+      const productName = populatedRequest.product_id.name;
+      const productSku = populatedRequest.product_id.sku;
+      const transactionTypeLabel = populatedRequest.transactionType === "stockIn" 
+        ? "Stock In" 
+        : "Stock Out";
+      
+      const notificationPromises = admins.map((admin) =>
+        Notification.create({
+          recipient: admin._id,
+          sender: req.user.id,
+          type: "request_created",
+          title: "New request requires your attention",
+          message: `${req.user.name} created a new ${transactionTypeLabel} request for ${productName} (${productSku}) - Quantity: ${populatedRequest.itemAmount} units`,
+          relatedRequest: request._id,
+          relatedProduct: req.body.product_id,
+        })
+      );
+      await Promise.all(notificationPromises);
+    }
 
     res.status(201).json({
       success: true,
-      data: request,
+      data: populatedRequest,
     });
   } catch (error) {
     next(error);
@@ -138,22 +175,81 @@ exports.updateRequest = async (req, res, next) => {
       });
     }
 
-    // Validate stock-out amount limit
-    if (req.body.transactionType === "stockOut" && req.body.itemAmount > 50) {
+    // Validate stock-out amount limit for staff
+    if (
+      req.user.role === "staff" &&
+      req.body.transactionType === "stockOut" &&
+      req.body.itemAmount > 50
+    ) {
       return res.status(400).json({
         success: false,
         error: "Stock-out amount cannot exceed 50 items",
       });
     }
 
-    request = await Request.findByIdAndUpdate(req.params.id, req.body, {
+    // Track who modified the request
+    const updatedData = {
+      ...req.body,
+      lastModifiedBy: req.user.id,
+    };
+
+    // Add activity log entry
+    request.activityLog.push({
+      action: "updated",
+      performedBy: req.user.id,
+      performedAt: new Date(),
+      details: `Updated by ${req.user.role}`,
+    });
+
+    await request.save();
+
+    request = await Request.findByIdAndUpdate(req.params.id, updatedData, {
       new: true,
       runValidators: true,
-    });
+    })
+      .populate("user", "name email role")
+      .populate("lastModifiedBy", "name role")
+      .populate("product_id", "name sku");
+
+    const isAdminUpdatingStaffRequest =
+      req.user.role === "admin" &&
+      request.user._id.toString() !== req.user.id;
+
+    // Create notification if admin updates staff request
+    if (isAdminUpdatingStaffRequest) {
+      const productName = typeof request.product_id === "object" 
+        ? request.product_id.name 
+        : "Unknown Product";
+      const productSku = typeof request.product_id === "object" 
+        ? request.product_id.sku 
+        : "";
+      const transactionTypeLabel = request.transactionType === "stockIn" 
+        ? "Stock In" 
+        : "Stock Out";
+
+      await Notification.create({
+        recipient: request.user._id,
+        sender: req.user.id,
+        type: "request_updated",
+        title: "Your request has been updated",
+        message: `Admin ${req.user.name} updated your ${transactionTypeLabel} request for ${productName} (${productSku}) - Quantity: ${request.itemAmount} units`,
+        relatedRequest: request._id,
+        relatedProduct: request.product_id,
+      });
+    }
 
     res.status(200).json({
       success: true,
       data: request,
+      notification: isAdminUpdatingStaffRequest
+        ? {
+            action: "updated",
+            performedBy: req.user.name,
+            performedByRole: "admin",
+            requestOwner: request.user.name,
+            timestamp: new Date(),
+          }
+        : null,
     });
   } catch (error) {
     next(error);
@@ -162,10 +258,12 @@ exports.updateRequest = async (req, res, next) => {
 
 // @desc    Delete request
 // @route   DELETE /api/v1/requests/:id
-// @access  Private
+// @access  Private (Admin can delete any, Staff can delete own)
 exports.deleteRequest = async (req, res, next) => {
   try {
-    const request = await Request.findById(req.params.id);
+    const request = await Request.findById(req.params.id)
+      .populate("user", "name email role")
+      .populate("product_id", "name sku");
 
     if (!request) {
       return res.status(404).json({
@@ -174,19 +272,62 @@ exports.deleteRequest = async (req, res, next) => {
       });
     }
 
-    // Staff can only delete their own requests
-    if (req.user.role === "staff" && request.user.toString() !== req.user.id) {
+    // Staff can only delete their own requests, Admin can delete any
+    if (req.user.role === "staff" && request.user._id.toString() !== req.user.id) {
       return res.status(403).json({
         success: false,
         error: "Not authorized to delete this request",
       });
     }
 
+    const isAdminDeletingStaffRequest =
+      req.user.role === "admin" && request.user.role === "staff";
+    const deletedByName = req.user.name || "Admin";
+    const requestOwnerName = request.user.name || "User";
+
+    // Prepare detailed request information for notification
+    const productName = typeof request.product_id === "object" 
+      ? request.product_id.name 
+      : "Unknown Product";
+    const productSku = typeof request.product_id === "object" 
+      ? request.product_id.sku 
+      : "";
+    const transactionTypeLabel = request.transactionType === "stockIn" 
+      ? "Stock In" 
+      : "Stock Out";
+
+    // Create notification if admin deletes staff request
+    if (isAdminDeletingStaffRequest) {
+      await Notification.create({
+        recipient: request.user._id,
+        sender: req.user.id,
+        type: "request_deleted",
+        title: "Your request has been deleted",
+        message: `Admin ${deletedByName} deleted your ${transactionTypeLabel} request for ${productName} (${productSku}) - ${request.itemAmount} units. Request date: ${new Date(request.transactionDate).toLocaleDateString()}`,
+        relatedProduct: request.product_id,
+      });
+    }
+
     await Request.findByIdAndDelete(req.params.id);
+
+    let message = "Request deleted successfully";
+    if (isAdminDeletingStaffRequest) {
+      message = `Admin (${deletedByName}) deleted request from ${requestOwnerName}`;
+    }
 
     res.status(200).json({
       success: true,
       data: {},
+      message: message,
+      notification: isAdminDeletingStaffRequest
+        ? {
+            action: "deleted",
+            performedBy: deletedByName,
+            performedByRole: "admin",
+            requestOwner: requestOwnerName,
+            timestamp: new Date(),
+          }
+        : null,
     });
   } catch (error) {
     next(error);

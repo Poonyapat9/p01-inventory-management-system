@@ -4,6 +4,7 @@ const connectDB = require("./config/db");
 const products = require("./routes/products");
 const auth = require("./routes/auth");
 const requests = require("./routes/requests");
+const notifications = require("./routes/notifications");
 const cookieParser = require("cookie-parser");
 const mongoSanitize = require("express-mongo-sanitize");
 const helmet = require("helmet");
@@ -68,6 +69,7 @@ app.use(
 app.use("/api/v1/products", products);
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/requests", requests);
+app.use("/api/v1/notifications", notifications);
 
 // Swagger configuration
 const swaggerOptions = {

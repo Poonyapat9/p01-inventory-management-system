@@ -29,17 +29,26 @@ const RequestsPage: React.FC = () => {
   useEffect(() => {
     fetchRequests();
     fetchProducts();
+    
+    // Real-time polling: Auto-refresh requests every 5 seconds
+    const pollInterval = setInterval(() => {
+      fetchRequests();
+    }, 5000);
+
+    return () => clearInterval(pollInterval);
   }, []);
 
   const fetchRequests = async () => {
     try {
-      dispatch(setLoading(true));
       const response = await requestService.getAllRequests();
       if (response.success && response.data) {
         dispatch(setRequests(response.data));
       }
     } catch (error: any) {
-      toast.error(error.message);
+      // Silently fail for background polling
+      console.error("Failed to fetch requests:", error);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
@@ -55,13 +64,13 @@ const RequestsPage: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm("Are you sure you want to cancel this request?"))
+    if (!window.confirm("Are you sure you want to delete this request?"))
       return;
 
     try {
-      await requestService.deleteRequest(id);
+      const response = await requestService.deleteRequest(id);
       dispatch(deleteRequest(id));
-      toast.success("Request cancelled successfully");
+      toast.success("Request deleted successfully");
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -174,7 +183,7 @@ const RequestsPage: React.FC = () => {
                         variant="danger"
                         onClick={() => handleDelete(request._id)}
                       >
-                        Cancel
+                        Delete
                       </Button>
                     </td>
                   </tr>
