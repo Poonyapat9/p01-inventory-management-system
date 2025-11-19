@@ -84,7 +84,22 @@ const RequestsPage: React.FC = () => {
     return product?.name || "Unknown Product";
   };
 
+  const getUserName = (userField: any): string => {
+    if (!userField) return "Unknown";
+    if (typeof userField === "string") return userField;
+    return userField.name || "Unknown";
+  };
+
   const isAdmin = user?.role === "admin";
+
+  // Filter requests for staff to show only their own
+  const filteredRequests = isAdmin
+    ? requests
+    : requests.filter((request) => {
+        const requestUserId =
+          typeof request.user === "object" ? request.user._id : request.user;
+        return requestUserId === user?._id;
+      });
 
   return (
     <ProtectedRoute>
@@ -105,7 +120,7 @@ const RequestsPage: React.FC = () => {
           <div className="flex justify-center py-12">
             <LoadingSpinner size="lg" />
           </div>
-        ) : requests.length === 0 ? (
+        ) : filteredRequests.length === 0 ? (
           <div className="bg-stone-100 rounded-lg border border-stone-200 p-8 text-center">
             <p className="text-gray-600">No requests found</p>
           </div>
@@ -126,13 +141,18 @@ const RequestsPage: React.FC = () => {
                   <th className="px-6 py-3 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
                     Amount
                   </th>
+                  {isAdmin && (
+                    <th className="px-6 py-3 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+                      Requested By
+                    </th>
+                  )}
                   <th className="px-6 py-3 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-200">
-                {requests.map((request) => (
+                {filteredRequests.map((request) => (
                   <tr key={request._id} className="bg-white hover:bg-stone-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {format(
@@ -159,6 +179,11 @@ const RequestsPage: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {request.itemAmount}
                     </td>
+                    {isAdmin && (
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {getUserName(request.user)}
+                      </td>
+                    )}
                     <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
                       <button
                         onClick={() =>
