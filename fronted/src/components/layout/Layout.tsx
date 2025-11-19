@@ -86,10 +86,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-stone-50">
       <Navbar />
       <main className="container mx-auto px-4 py-8 max-w-7xl">{children}</main>
-      <footer className="bg-white border-t border-gray-100 mt-auto">
+      <footer className="bg-white border-t border-stone-200 mt-auto">
         <div className="container mx-auto px-4 py-6 text-center">
           <p className="text-gray-600 text-sm">
             &copy; {new Date().getFullYear()} StockMe

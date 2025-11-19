@@ -28,13 +28,13 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="bg-white border-b border-gray-100 shadow-sm">
+    <nav className="bg-white border-b border-stone-200 shadow-sm">
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-8">
             <Link
               href="/"
-              className="text-xl font-bold text-gray-900 hover:text-blue-600 transition-colors"
+              className="text-xl font-bold text-gray-900 hover:text-indigo-600 transition-colors"
             >
               StockMe
             </Link>
@@ -75,7 +75,7 @@ const Navbar: React.FC = () => {
                 <span className="text-sm text-gray-700">
                   {user?.name}
                   {user?.role && (
-                    <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                    <span className="ml-2 text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full">
                       {user.role}
                     </span>
                   )}
@@ -97,7 +97,7 @@ const Navbar: React.FC = () => {
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-lg transition-all"
+                  className="bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-lg transition-all"
                 >
                   Register
                 </Link>

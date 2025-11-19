@@ -12,7 +12,7 @@ const LoadingSpinner: React.FC<{ size?: "sm" | "md" | "lg" }> = ({
   return (
     <div className="flex justify-center items-center">
       <div
-        className={`animate-spin rounded-full border-b-2 border-primary-600 ${sizeClasses[size]}`}
+        className={`animate-spin rounded-full border-b-2 border-indigo-600 ${sizeClasses[size]}`}
       ></div>
     </div>
   );
