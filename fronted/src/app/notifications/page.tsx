@@ -121,42 +121,10 @@ const NotificationsPage: React.FC = () => {
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-gray-900">
               Notifications
-              {isRefreshing && (
-                <span className="text-sm text-gray-500 flex items-center gap-1">
-                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                      fill="none"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  Updating...
-                </span>
-              )}
             </h1>
-            {unreadCount > 0 && (
-              <p className="text-sm text-gray-600 mt-1">
-                You have {unreadCount} unread notification
-                {unreadCount !== 1 ? "s" : ""}
-              </p>
-            )}
           </div>
-          {unreadCount > 0 && (
-            <Button onClick={handleMarkAllAsRead} variant="secondary">
-              Mark All as Read
-            </Button>
-          )}
         </div>
 
         {loading ? (
@@ -164,81 +132,43 @@ const NotificationsPage: React.FC = () => {
             <LoadingSpinner size="lg" />
           </div>
         ) : notifications.length === 0 ? (
-          <Card>
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4">🔔</div>
-              <p className="text-gray-600 text-lg">No notifications yet</p>
-              <p className="text-gray-500 text-sm mt-2">
-                You&apos;ll be notified when admins interact with your requests
-              </p>
-            </div>
-          </Card>
+          <div className="bg-stone-100 rounded-lg border border-stone-200 p-12 text-center">
+            <p className="text-gray-600 text-lg">No notifications yet</p>
+            <p className="text-gray-500 text-sm mt-2">
+              You&apos;ll be notified when admins interact with your requests
+            </p>
+          </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {notifications.map((notification) => (
-              <Card
+              <div
                 key={notification._id}
-                className={`${
-                  !notification.isRead
-                    ? getNotificationColor(notification.type)
-                    : "bg-white"
-                } ${!notification.isRead ? "border-l-4" : ""}`}
+                className="bg-stone-100 rounded-lg border border-stone-200 p-6"
               >
-                <div className="flex items-start gap-4">
-                  <div className="text-3xl flex-shrink-0">
-                    {getNotificationIcon(notification.type)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <h3
-                          className={`text-base font-semibold ${
-                            !notification.isRead
-                              ? "text-gray-900"
-                              : "text-gray-700"
-                          }`}
-                        >
-                          {notification.title}
-                        </h3>
-                        <p className="text-sm text-gray-600 mt-1">
-                          {notification.message}
-                        </p>
-                        <div className="flex items-center gap-4 mt-2">
-                          <span className="text-xs text-gray-500">
-                            {formatDistanceToNow(
-                              new Date(notification.createdAt),
-                              {
-                                addSuffix: true,
-                              }
-                            )}
-                          </span>
-                          {!notification.isRead && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                              New
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex gap-2 flex-shrink-0">
-                        {!notification.isRead && (
-                          <button
-                            onClick={() => handleMarkAsRead(notification._id)}
-                            className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                          >
-                            Mark as read
-                          </button>
-                        )}
-                        <button
-                          onClick={() => handleDelete(notification._id)}
-                          className="text-red-600 hover:text-red-800 text-sm font-medium"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
+                <div className="flex flex-col gap-3">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {notification.title}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    {notification.message}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500">
+                      {formatDistanceToNow(
+                        new Date(notification.createdAt),
+                        {
+                          addSuffix: true,
+                        }
+                      )}
+                    </span>
+                    {!notification.isRead && (
+                      <span className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-cyan-300 text-gray-900">
+                        New
+                      </span>
+                    )}
                   </div>
                 </div>
-              </Card>
+              </div>
             ))}
           </div>
         )}

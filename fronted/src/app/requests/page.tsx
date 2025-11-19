@@ -93,9 +93,6 @@ const RequestsPage: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900">
             Transaction Requests
           </h1>
-          <Button onClick={() => router.push("/requests/new")}>
-            New Request
-          </Button>
         </div>
 
         {loading ? (
@@ -103,39 +100,34 @@ const RequestsPage: React.FC = () => {
             <LoadingSpinner size="lg" />
           </div>
         ) : requests.length === 0 ? (
-          <Card>
-            <p className="text-center text-gray-600 py-8">No requests found</p>
-          </Card>
+          <div className="bg-stone-100 rounded-lg border border-stone-200 p-8 text-center">
+            <p className="text-gray-600">No requests found</p>
+          </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border rounded-lg">
-              <thead className="bg-gray-50">
+            <table className="min-w-full bg-stone-100 border border-stone-200 rounded-lg overflow-hidden">
+              <thead className="bg-stone-200">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
                     Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
                     Product
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
                     Type
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
                     Amount
                   </th>
-                  {isAdmin && (
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      User
-                    </th>
-                  )}
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-stone-200">
                 {requests.map((request) => (
-                  <tr key={request._id} className="hover:bg-gray-50">
+                  <tr key={request._id} className="bg-white hover:bg-stone-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {format(
                         new Date(request.transactionDate),
@@ -147,10 +139,10 @@ const RequestsPage: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`px-2 py-1 text-xs rounded-full ${
+                        className={`px-3 py-1 text-sm rounded-full ${
                           request.transactionType === "stockIn"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
+                            ? "bg-green-200 text-gray-900"
+                            : "bg-red-200 text-gray-900"
                         }`}
                       >
                         {request.transactionType === "stockIn"
@@ -161,30 +153,21 @@ const RequestsPage: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {request.itemAmount}
                     </td>
-                    {isAdmin && (
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {typeof request.user === "object"
-                          ? request.user.name
-                          : "N/A"}
-                      </td>
-                    )}
                     <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
-                      <Button
-                        size="sm"
-                        variant="secondary"
+                      <button
                         onClick={() =>
                           router.push(`/requests/${request._id}/edit`)
                         }
+                        className="bg-yellow-200 hover:bg-yellow-300 text-gray-900 px-4 py-1.5 rounded-lg font-medium transition-all"
                       >
                         Edit
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="danger"
+                      </button>
+                      <button
                         onClick={() => handleDelete(request._id)}
+                        className="bg-red-300 hover:bg-red-400 text-gray-900 px-4 py-1.5 rounded-lg font-medium transition-all"
                       >
                         Delete
-                      </Button>
+                      </button>
                     </td>
                   </tr>
                 ))}
