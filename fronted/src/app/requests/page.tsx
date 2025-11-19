@@ -29,7 +29,7 @@ const RequestsPage: React.FC = () => {
   useEffect(() => {
     fetchRequests();
     fetchProducts();
-    
+
     // Real-time polling: Auto-refresh requests every 5 seconds
     const pollInterval = setInterval(() => {
       fetchRequests();

@@ -126,10 +126,11 @@ exports.createRequest = async (req, res, next) => {
       const admins = await User.find({ role: "admin" });
       const productName = populatedRequest.product_id.name;
       const productSku = populatedRequest.product_id.sku;
-      const transactionTypeLabel = populatedRequest.transactionType === "stockIn" 
-        ? "Stock In" 
-        : "Stock Out";
-      
+      const transactionTypeLabel =
+        populatedRequest.transactionType === "stockIn"
+          ? "Stock In"
+          : "Stock Out";
+
       const notificationPromises = admins.map((admin) =>
         Notification.create({
           recipient: admin._id,
@@ -212,20 +213,18 @@ exports.updateRequest = async (req, res, next) => {
       .populate("product_id", "name sku");
 
     const isAdminUpdatingStaffRequest =
-      req.user.role === "admin" &&
-      request.user._id.toString() !== req.user.id;
+      req.user.role === "admin" && request.user._id.toString() !== req.user.id;
 
     // Create notification if admin updates staff request
     if (isAdminUpdatingStaffRequest) {
-      const productName = typeof request.product_id === "object" 
-        ? request.product_id.name 
-        : "Unknown Product";
-      const productSku = typeof request.product_id === "object" 
-        ? request.product_id.sku 
-        : "";
-      const transactionTypeLabel = request.transactionType === "stockIn" 
-        ? "Stock In" 
-        : "Stock Out";
+      const productName =
+        typeof request.product_id === "object"
+          ? request.product_id.name
+          : "Unknown Product";
+      const productSku =
+        typeof request.product_id === "object" ? request.product_id.sku : "";
+      const transactionTypeLabel =
+        request.transactionType === "stockIn" ? "Stock In" : "Stock Out";
 
       await Notification.create({
         recipient: request.user._id,
@@ -273,7 +272,10 @@ exports.deleteRequest = async (req, res, next) => {
     }
 
     // Staff can only delete their own requests, Admin can delete any
-    if (req.user.role === "staff" && request.user._id.toString() !== req.user.id) {
+    if (
+      req.user.role === "staff" &&
+      request.user._id.toString() !== req.user.id
+    ) {
       return res.status(403).json({
         success: false,
         error: "Not authorized to delete this request",
@@ -286,15 +288,14 @@ exports.deleteRequest = async (req, res, next) => {
     const requestOwnerName = request.user.name || "User";
 
     // Prepare detailed request information for notification
-    const productName = typeof request.product_id === "object" 
-      ? request.product_id.name 
-      : "Unknown Product";
-    const productSku = typeof request.product_id === "object" 
-      ? request.product_id.sku 
-      : "";
-    const transactionTypeLabel = request.transactionType === "stockIn" 
-      ? "Stock In" 
-      : "Stock Out";
+    const productName =
+      typeof request.product_id === "object"
+        ? request.product_id.name
+        : "Unknown Product";
+    const productSku =
+      typeof request.product_id === "object" ? request.product_id.sku : "";
+    const transactionTypeLabel =
+      request.transactionType === "stockIn" ? "Stock In" : "Stock Out";
 
     // Create notification if admin deletes staff request
     if (isAdminDeletingStaffRequest) {
@@ -303,7 +304,11 @@ exports.deleteRequest = async (req, res, next) => {
         sender: req.user.id,
         type: "request_deleted",
         title: "Your request has been deleted",
-        message: `Admin ${deletedByName} deleted your ${transactionTypeLabel} request for ${productName} (${productSku}) - ${request.itemAmount} units. Request date: ${new Date(request.transactionDate).toLocaleDateString()}`,
+        message: `Admin ${deletedByName} deleted your ${transactionTypeLabel} request for ${productName} (${productSku}) - ${
+          request.itemAmount
+        } units. Request date: ${new Date(
+          request.transactionDate
+        ).toLocaleDateString()}`,
         relatedProduct: request.product_id,
       });
     }

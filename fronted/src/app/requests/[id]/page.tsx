@@ -1,58 +1,65 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { requestService } from '@/services/requestService';
-import { productService } from '@/services/productService';
-import { Request, Product } from '@/types';
-import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import Layout from '@/components/layout/Layout';
-import Card from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import { useAppSelector } from '@/store/hooks';
-import { format } from 'date-fns';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { requestService } from "@/services/requestService";
+import { productService } from "@/services/productService";
+import { Request, Product } from "@/types";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import Layout from "@/components/layout/Layout";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { useAppSelector } from "@/store/hooks";
+import { format } from "date-fns";
 
-export default function RequestDetailPage({ params }: { params: { id: string } }) {
+export default function RequestDetailPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const router = useRouter();
   const { user } = useAppSelector((state) => state.auth);
   const [request, setRequest] = useState<Request | null>(null);
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>('');
-  const isAdmin = user?.role === 'admin';
+  const [error, setError] = useState<string>("");
+  const isAdmin = user?.role === "admin";
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        setError('');
-        
+        setError("");
+
         const response = await requestService.getRequest(params.id);
         if (response.success && response.data) {
           setRequest(response.data);
 
           // Get product details
-          const productId = typeof response.data.product_id === 'string' 
-            ? response.data.product_id 
-            : response.data.product_id._id;
-          
+          const productId =
+            typeof response.data.product_id === "string"
+              ? response.data.product_id
+              : response.data.product_id._id;
+
           const productResponse = await productService.getProduct(productId);
           if (productResponse.success && productResponse.data) {
             setProduct(productResponse.data);
           }
         }
       } catch (err: any) {
-        console.error('Error fetching request:', err);
+        console.error("Error fetching request:", err);
         if (err.response?.status === 404) {
-          setError('This request was not found. It may have been deleted.');
+          setError("This request was not found. It may have been deleted.");
         } else {
-          setError(err.response?.data?.message || 'Failed to load request details');
+          setError(
+            err.response?.data?.message || "Failed to load request details"
+          );
         }
-        
+
         // Redirect after showing error briefly
         setTimeout(() => {
-          router.push('/requests');
+          router.push("/requests");
         }, 2000);
       } finally {
         setLoading(false);
@@ -67,21 +74,23 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
   };
 
   const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this request?')) {
+    if (!window.confirm("Are you sure you want to delete this request?")) {
       return;
     }
 
     try {
       await requestService.deleteRequest(params.id);
-      router.push('/requests');
+      router.push("/requests");
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete request');
+      setError(err.response?.data?.message || "Failed to delete request");
     }
   };
 
-  const getUserName = (userField: string | { name: string } | undefined): string => {
-    if (!userField) return 'Unknown';
-    return typeof userField === 'string' ? userField : userField.name;
+  const getUserName = (
+    userField: string | { name: string } | undefined
+  ): string => {
+    if (!userField) return "Unknown";
+    return typeof userField === "string" ? userField : userField.name;
   };
 
   if (loading) {
@@ -104,12 +113,17 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
             <Card>
               <div className="text-center py-8">
                 <div className="text-6xl mb-4">⚠️</div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Request Not Found</h2>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  Request Not Found
+                </h2>
                 <p className="text-gray-600 mb-4">
-                  {error || 'This request was not found. It may have been deleted.'}
+                  {error ||
+                    "This request was not found. It may have been deleted."}
                 </p>
-                <p className="text-sm text-gray-500 mb-4">Redirecting to requests page...</p>
-                <Button onClick={() => router.push('/requests')}>
+                <p className="text-sm text-gray-500 mb-4">
+                  Redirecting to requests page...
+                </p>
+                <Button onClick={() => router.push("/requests")}>
                   Go to Requests
                 </Button>
               </div>
@@ -125,14 +139,14 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
       <Layout>
         <div className="max-w-4xl mx-auto">
           <div className="mb-6 flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-900">Request Details</h1>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Request Details
+            </h1>
             <div className="space-x-2">
               <Button variant="secondary" onClick={() => router.back()}>
                 Back
               </Button>
-              <Button onClick={handleEdit}>
-                Edit
-              </Button>
+              <Button onClick={handleEdit}>Edit</Button>
               {isAdmin && (
                 <Button variant="danger" onClick={handleDelete}>
                   Delete
@@ -153,7 +167,9 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
                     <div className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
                       <div>
                         <p className="font-medium">{product.name}</p>
-                        <p className="text-sm text-gray-600">SKU: {product.sku}</p>
+                        <p className="text-sm text-gray-600">
+                          SKU: {product.sku}
+                        </p>
                         <p className="text-sm text-gray-600">
                           Current Stock: {product.stockQuantity} {product.unit}
                         </p>
@@ -167,7 +183,9 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
                       </Button>
                     </div>
                   ) : (
-                    <p className="text-gray-500">Product information not available</p>
+                    <p className="text-gray-500">
+                      Product information not available
+                    </p>
                   )}
                 </div>
               </div>
@@ -178,10 +196,14 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
                   Transaction Type
                 </label>
                 <p className="text-gray-900">
-                  {request.transactionType === 'stockIn' ? (
-                    <span className="text-green-600 font-medium">📦 Stock In</span>
+                  {request.transactionType === "stockIn" ? (
+                    <span className="text-green-600 font-medium">
+                      📦 Stock In
+                    </span>
                   ) : (
-                    <span className="text-red-600 font-medium">📤 Stock Out</span>
+                    <span className="text-red-600 font-medium">
+                      📤 Stock Out
+                    </span>
                   )}
                 </p>
               </div>
@@ -192,7 +214,7 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
                   Quantity
                 </label>
                 <p className="text-gray-900 text-lg font-semibold">
-                  {request.itemAmount} {product?.unit || 'units'}
+                  {request.itemAmount} {product?.unit || "units"}
                 </p>
               </div>
 
@@ -202,7 +224,7 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
                   Transaction Date
                 </label>
                 <p className="text-gray-900">
-                  {format(new Date(request.transactionDate), 'PPP')}
+                  {format(new Date(request.transactionDate), "PPP")}
                 </p>
               </div>
 
@@ -223,7 +245,7 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
                     Created At
                   </label>
                   <p className="text-gray-900">
-                    {format(new Date(request.createdAt), 'PPpp')}
+                    {format(new Date(request.createdAt), "PPpp")}
                   </p>
                 </div>
                 <div>
@@ -231,7 +253,7 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
                     Last Updated
                   </label>
                   <p className="text-gray-900">
-                    {format(new Date(request.updatedAt), 'PPpp')}
+                    {format(new Date(request.updatedAt), "PPpp")}
                   </p>
                 </div>
               </div>
@@ -256,13 +278,18 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
                   </label>
                   <div className="bg-gray-50 p-4 rounded-lg space-y-2">
                     {request.activityLog.map((activity, index) => (
-                      <div key={index} className="text-sm border-b border-gray-200 last:border-0 pb-2 last:pb-0">
+                      <div
+                        key={index}
+                        className="text-sm border-b border-gray-200 last:border-0 pb-2 last:pb-0"
+                      >
                         <p className="text-gray-900">
-                          <span className="font-medium capitalize">{activity.action}</span> by{' '}
-                          {getUserName(activity.performedBy as any)}
+                          <span className="font-medium capitalize">
+                            {activity.action}
+                          </span>{" "}
+                          by {getUserName(activity.performedBy as any)}
                         </p>
                         <p className="text-gray-600 text-xs">
-                          {format(new Date(activity.performedAt), 'PPpp')}
+                          {format(new Date(activity.performedAt), "PPpp")}
                         </p>
                         {activity.details && (
                           <p className="text-gray-600 text-xs mt-1">

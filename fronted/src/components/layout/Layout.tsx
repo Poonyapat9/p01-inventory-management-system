@@ -51,13 +51,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           onClick: () => {
             window.location.href = "/notifications";
           },
-          style: { 
+          style: {
             cursor: "pointer",
             background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
             color: "white",
             fontWeight: "600",
             borderRadius: "12px",
-            boxShadow: "0 4px 12px rgba(102, 126, 234, 0.4)"
+            boxShadow: "0 4px 12px rgba(102, 126, 234, 0.4)",
           },
           className: "notification-toast",
           hideProgressBar: false,
