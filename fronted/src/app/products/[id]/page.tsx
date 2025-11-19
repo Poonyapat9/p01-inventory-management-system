@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { useAppSelector } from "@/store/hooks";
 import { productService } from "@/services/productService";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
@@ -14,8 +15,12 @@ const ProductDetailPage: React.FC = () => {
   const router = useRouter();
   const params = useParams();
   const id = params.id as string;
+  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const isAdmin = user?.role === "admin";
+  const isStaff = user?.role === "staff";
 
   useEffect(() => {
     fetchProduct();
@@ -142,22 +147,26 @@ const ProductDetailPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="border-t pt-4 flex gap-3">
-              <Button
-                variant="primary"
-                onClick={() => router.push(`/products/${product._id}/edit`)}
-                className="flex-1"
-              >
-                Edit Product
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() => router.push("/requests/new")}
-                className="flex-1"
-              >
-                Create Request
-              </Button>
-            </div>
+            {isAuthenticated && (isAdmin || isStaff) && (
+              <div className="border-t pt-4 flex gap-3">
+                {isAdmin && (
+                  <Button
+                    variant="primary"
+                    onClick={() => router.push(`/products/${product._id}/edit`)}
+                    className="flex-1"
+                  >
+                    Edit Product
+                  </Button>
+                )}
+                <Button
+                  variant="secondary"
+                  onClick={() => router.push("/requests/new")}
+                  className="flex-1"
+                >
+                  Create Request
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </Card>

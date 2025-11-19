@@ -29,13 +29,17 @@ app.use(xss());
 app.use(mongoSanitize());
 app.use(hpp());
 
-// Rate limiting
+// Rate limiting - more lenient for development
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 500, // increased to 500 requests per windowMs
   message: {
     success: false,
     error: "Too many requests from this IP, please try again later.",
+  },
+  skip: (req) => {
+    // Skip rate limiting for health checks
+    return req.path === '/health' || req.path === '/';
   },
 });
 app.use(limiter);

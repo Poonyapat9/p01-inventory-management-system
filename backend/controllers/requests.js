@@ -64,19 +64,11 @@ exports.getRequest = async (req, res, next) => {
 
 // @desc    Create new request
 // @route   POST /api/v1/requests
-// @access  Private (Staff only)
+// @access  Private (Staff and Admin)
 exports.createRequest = async (req, res, next) => {
   try {
-    // Only staff can create requests
-    if (req.user.role !== "staff") {
-      return res.status(403).json({
-        success: false,
-        error: "Only staff can create requests",
-      });
-    }
-
-    // Validate stock-out amount limit
-    if (req.body.transactionType === "stockOut" && req.body.itemAmount > 50) {
+    // Validate stock-out amount limit for staff (admin has no limit)
+    if (req.user.role === "staff" && req.body.transactionType === "stockOut" && req.body.itemAmount > 50) {
       return res.status(400).json({
         success: false,
         error: "Stock-out amount cannot exceed 50 items",
