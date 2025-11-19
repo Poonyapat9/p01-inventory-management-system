@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
@@ -27,18 +27,7 @@ const NotificationsPage: React.FC = () => {
   );
   const [isRefreshing, setIsRefreshing] = React.useState(false);
 
-  useEffect(() => {
-    fetchNotifications();
-
-    // Real-time polling: Check for new notifications every 5 seconds
-    const pollInterval = setInterval(() => {
-      fetchNotifications();
-    }, 5000);
-
-    return () => clearInterval(pollInterval);
-  }, []);
-
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     try {
       setIsRefreshing(true);
       const response = await notificationService.getAllNotifications();
@@ -55,7 +44,18 @@ const NotificationsPage: React.FC = () => {
       dispatch(setLoading(false));
       setTimeout(() => setIsRefreshing(false), 500);
     }
-  };
+  }, [dispatch]);
+
+  useEffect(() => {
+    fetchNotifications();
+
+    // Real-time polling: Check for new notifications every 5 seconds
+    const pollInterval = setInterval(() => {
+      fetchNotifications();
+    }, 5000);
+
+    return () => clearInterval(pollInterval);
+  }, [fetchNotifications]);
 
   const handleMarkAsRead = async (id: string) => {
     try {
@@ -169,7 +169,7 @@ const NotificationsPage: React.FC = () => {
               <div className="text-6xl mb-4">🔔</div>
               <p className="text-gray-600 text-lg">No notifications yet</p>
               <p className="text-gray-500 text-sm mt-2">
-                You'll be notified when admins interact with your requests
+                You&apos;ll be notified when admins interact with your requests
               </p>
             </div>
           </Card>

@@ -2,7 +2,8 @@ import axios from "axios";
 import { store } from "@/store";
 
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://stockme-backend.vercel.app/api/v1";
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
