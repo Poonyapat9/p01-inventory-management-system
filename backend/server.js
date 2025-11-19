@@ -59,6 +59,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
   process.env.FRONTEND_URL,
+  /https:\/\/.*\.vercel\.app$/, // Allow all Vercel preview deployments
 ].filter(Boolean);
 
 app.use(
@@ -67,7 +68,15 @@ app.use(
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
 
-      if (allowedOrigins.indexOf(origin) !== -1) {
+      // Check if origin matches any allowed origin (string or regex)
+      const isAllowed = allowedOrigins.some((allowedOrigin) => {
+        if (allowedOrigin instanceof RegExp) {
+          return allowedOrigin.test(origin);
+        }
+        return allowedOrigin === origin;
+      });
+
+      if (isAllowed) {
         callback(null, true);
       } else {
         callback(null, false);
