@@ -41,6 +41,7 @@ const RegisterPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validation
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match");
       return;
@@ -51,14 +52,12 @@ const RegisterPage: React.FC = () => {
       return;
     }
 
-    // Validate telephone number (must be exactly 10 digits)
     const telRegex = /^\d{10}$/;
     if (!telRegex.test(formData.tel)) {
       toast.error("Telephone number must be exactly 10 digits");
       return;
     }
 
-    // Validate role selection
     if (!formData.role) {
       toast.error("Please select a role");
       return;
@@ -69,7 +68,6 @@ const RegisterPage: React.FC = () => {
 
     try {
       const { confirmPassword, ...registerData } = formData;
-      console.log("Sending registration data:", registerData); // Debug log
       const response = await authService.register(registerData as any);
 
       if (response.success && response.data && response.token) {
@@ -79,23 +77,21 @@ const RegisterPage: React.FC = () => {
             token: response.token,
           })
         );
-        toast.success("Registration successful!");
+        toast.success("Account created successfully!");
         router.push("/products");
       }
     } catch (error: any) {
       let errorMessage = error.message || "Registration failed";
 
-      // Check for duplicate email error
       if (
         errorMessage.includes("duplicate") ||
         errorMessage.includes("E11000") ||
         errorMessage.includes("unique")
       ) {
         errorMessage =
-          "This email is already registered. Please use a different email or try logging in.";
+          "This email is already registered. Please use a different email.";
       }
 
-      console.error("Registration error:", error); // Debug log
       dispatch(setError(errorMessage));
       toast.error(errorMessage);
     } finally {
@@ -105,23 +101,25 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
         <Card>
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900">Create Account</h2>
-            <p className="mt-2 text-sm text-gray-600">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              Join StockMe
+            </h2>
+            <p className="text-sm text-gray-600">
               Already have an account?{" "}
               <Link
                 href="/auth/login"
-                className="font-medium text-primary-600 hover:text-primary-500"
+                className="font-medium text-primary-600 hover:text-primary-500 transition-colors"
               >
                 Sign in
               </Link>
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <Input
               label="Full Name"
               type="text"
@@ -151,7 +149,7 @@ const RegisterPage: React.FC = () => {
               required
               pattern="\d{10}"
               maxLength={10}
-              placeholder="0812345678 (10 digits)"
+              placeholder="0812345678"
             />
 
             <Select
@@ -175,7 +173,7 @@ const RegisterPage: React.FC = () => {
               onChange={handleChange}
               required
               minLength={6}
-              placeholder="Enter password (min 6 characters)"
+              placeholder="Minimum 6 characters"
             />
 
             <Input
@@ -185,19 +183,25 @@ const RegisterPage: React.FC = () => {
               value={formData.confirmPassword}
               onChange={handleChange}
               required
-              placeholder="Confirm password"
+              placeholder="Re-enter password"
             />
 
-            <Button
-              type="submit"
-              variant="primary"
-              size="lg"
-              className="w-full mt-6"
-              isLoading={isLoading}
-            >
-              Create Account
-            </Button>
+            <div className="pt-2">
+              <Button
+                type="submit"
+                variant="primary"
+                size="lg"
+                className="w-full"
+                isLoading={isLoading}
+              >
+                Create Account
+              </Button>
+            </div>
           </form>
+
+          <p className="mt-6 text-center text-xs text-gray-500">
+            By creating an account, you agree to our terms and conditions
+          </p>
         </Card>
       </div>
     </div>
