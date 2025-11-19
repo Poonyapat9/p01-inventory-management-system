@@ -14,15 +14,18 @@ This guide will walk you through deploying both the frontend and backend of the 
 ### Step 1: Deploy Backend
 
 1. **Go to Vercel Dashboard**
+
    - Visit [https://vercel.com/dashboard](https://vercel.com/dashboard)
    - Click "Add New..." → "Project"
 
 2. **Import Backend Repository**
+
    - Select your Git provider (GitHub/GitLab/Bitbucket)
    - Find and import your `p01-inventory-management-system` repository
    - Click "Import"
 
 3. **Configure Backend Project**
+
    - **Project Name**: `stockme-backend` (or your preferred name)
    - **Framework Preset**: Other
    - **Root Directory**: `backend`
@@ -30,6 +33,7 @@ This guide will walk you through deploying both the frontend and backend of the 
 
 4. **Add Environment Variables**
    Click "Environment Variables" and add the following:
+
    ```
    NODE_ENV=production
    MONGO_URI=mongodb+srv://Poonyapat9:fYZRcJcxVaRvEyqR@stockme.poqrvhe.mongodb.net/stockme?retryWrites=true&w=majority
@@ -38,7 +42,7 @@ This guide will walk you through deploying both the frontend and backend of the 
    JWT_COOKIE_EXPIRE=365
    FRONTEND_URL=https://your-frontend-url.vercel.app
    ```
-   
+
    **Note**: You'll update `FRONTEND_URL` after deploying the frontend
 
 5. **Deploy Backend**
@@ -49,11 +53,13 @@ This guide will walk you through deploying both the frontend and backend of the 
 ### Step 2: Deploy Frontend
 
 1. **Add New Project**
+
    - Go back to Vercel Dashboard
    - Click "Add New..." → "Project"
    - Import the same repository again
 
 2. **Configure Frontend Project**
+
    - **Project Name**: `stockme-frontend` (or your preferred name)
    - **Framework Preset**: Next.js
    - **Root Directory**: `fronted`
@@ -61,10 +67,11 @@ This guide will walk you through deploying both the frontend and backend of the 
 
 3. **Add Environment Variables**
    Click "Environment Variables" and add:
+
    ```
    NEXT_PUBLIC_API_URL=https://your-backend-url.vercel.app/api/v1
    ```
-   
+
    Replace `your-backend-url.vercel.app` with your actual backend URL from Step 1
 
 4. **Deploy Frontend**
@@ -115,6 +122,7 @@ vercel --prod
 ```
 
 Follow the prompts:
+
 - Set up and deploy? **Y**
 - Which scope? Select your account
 - Link to existing project? **N**
@@ -133,6 +141,7 @@ vercel env add NODE_ENV
 ```
 
 Then redeploy:
+
 ```bash
 vercel --prod
 ```
@@ -145,6 +154,7 @@ vercel --prod
 ```
 
 Follow the prompts:
+
 - Set up and deploy? **Y**
 - Which scope? Select your account
 - Link to existing project? **N**
@@ -152,11 +162,13 @@ Follow the prompts:
 - In which directory is your code located? `./`
 
 Add environment variable:
+
 ```bash
 vercel env add NEXT_PUBLIC_API_URL
 ```
 
 Enter your backend URL when prompted, then redeploy:
+
 ```bash
 vercel --prod
 ```
@@ -181,6 +193,7 @@ vercel --prod
 Visit: `https://your-backend-url.vercel.app/health`
 
 You should see:
+
 ```json
 {
   "success": true,
@@ -203,19 +216,23 @@ You should see:
 ### Backend Issues
 
 **Problem**: 500 Internal Server Error
+
 - **Solution**: Check environment variables are correctly set in Vercel dashboard
 - **Solution**: Check MongoDB Atlas allows connections from anywhere (0.0.0.0/0)
 
 **Problem**: CORS errors
+
 - **Solution**: Ensure `FRONTEND_URL` environment variable matches your frontend URL exactly
 
 ### Frontend Issues
 
 **Problem**: API calls fail
+
 - **Solution**: Check `NEXT_PUBLIC_API_URL` is set correctly
 - **Solution**: Verify backend is deployed and accessible
 
 **Problem**: 404 on routes
+
 - **Solution**: This is normal for Next.js on Vercel, it handles routing automatically
 
 ## Updating Your Deployment
@@ -245,6 +262,7 @@ vercel --prod
 ## Environment Variables Reference
 
 ### Backend (.env)
+
 ```
 NODE_ENV=production
 MONGO_URI=<your-mongodb-connection-string>
@@ -255,6 +273,7 @@ FRONTEND_URL=<your-frontend-vercel-url>
 ```
 
 ### Frontend (.env.local)
+
 ```
 NEXT_PUBLIC_API_URL=<your-backend-vercel-url>/api/v1
 ```
@@ -262,12 +281,14 @@ NEXT_PUBLIC_API_URL=<your-backend-vercel-url>/api/v1
 ## Viewing Logs
 
 ### Via Vercel Dashboard
+
 1. Go to your project
 2. Click "Deployments"
 3. Click on a deployment
 4. View "Building" and "Runtime Logs"
 
 ### Via CLI
+
 ```bash
 vercel logs <deployment-url>
 ```
@@ -293,6 +314,7 @@ vercel logs <deployment-url>
 ## Support
 
 If you encounter issues:
+
 - Check Vercel deployment logs
 - Check MongoDB Atlas connection
 - Verify all environment variables are set correctly
