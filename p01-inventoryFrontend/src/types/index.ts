@@ -1,0 +1,94 @@
+export interface User {
+  _id: string;
+  name: string;
+  email: string;
+  tel: string;
+  role: "admin" | "staff";
+  createdAt: string;
+}
+
+export interface AuthState {
+  user: User | null;
+  token: string | null;
+  isAuthenticated: boolean;
+  loading: boolean;
+  error: string | null;
+}
+
+export interface Product {
+  _id: string;
+  name: string;
+  sku: string;
+  description: string;
+  category: string;
+  price: number;
+  stockQuantity: number;
+  unit: string;
+  picture: string;
+  isActive?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ProductState {
+  products: Product[];
+  currentProduct: Product | null;
+  loading: boolean;
+  error: string | null;
+}
+
+export interface Request {
+  _id: string;
+  transactionDate: string;
+  transactionType: "stockIn" | "stockOut";
+  itemAmount: number;
+  user: string | User;
+  product_id: string | Product;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RequestState {
+  requests: Request[];
+  currentRequest: Request | null;
+  loading: boolean;
+  error: string | null;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface RegisterData {
+  name: string;
+  email: string;
+  tel: string;
+  role: "admin" | "staff";
+  password: string;
+}
+
+export interface CreateProductData {
+  name: string;
+  sku: string;
+  description: string;
+  category: string;
+  price: number;
+  stockQuantity: number;
+  unit: string;
+  picture: string;
+}
+
+export interface CreateRequestData {
+  transactionDate: string;
+  transactionType: "stockIn" | "stockOut";
+  itemAmount: number;
+  product_id: string;
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  token?: string;
+}
