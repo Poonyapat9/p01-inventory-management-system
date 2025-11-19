@@ -72,7 +72,7 @@ const ProductsPage: React.FC = () => {
             placeholder="Search products..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
           />
           {isAuthenticated && isAdmin && (
             <Button onClick={() => router.push("/products/new")}>
@@ -95,54 +95,59 @@ const ProductsPage: React.FC = () => {
           {filteredProducts.map((product) => (
             <Card
               key={product._id}
-              className="hover:shadow-lg transition-shadow"
+              className="hover:shadow-md hover:border-gray-200 transition-all"
             >
-              <div className="space-y-3">
-                <div className="w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
+              <div className="space-y-4">
+                <div className="w-full h-48 bg-gray-50 rounded-lg overflow-hidden">
                   <img
                     src={
                       product.picture ||
-                      'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect width="400" height="300" fill="%23f3f4f6"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="%239ca3af"%3ENo Image%3C/text%3E%3C/svg%3E'
+                      'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect width="400" height="300" fill="%23f9fafb"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="%239ca3af"%3ENo Image%3C/text%3E%3C/svg%3E'
                     }
                     alt={product.name}
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src =
-                        'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect width="400" height="300" fill="%23f3f4f6"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="%239ca3af"%3EImage Not Found%3C/text%3E%3C/svg%3E';
+                        'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect width="400" height="300" fill="%23f9fafb"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="%239ca3af"%3EImage Not Found%3C/text%3E%3C/svg%3E';
                     }}
                   />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900">
-                  {product.name}
-                </h3>
-                <div className="text-sm text-gray-600 space-y-1">
-                  <p>
-                    <span className="font-medium">SKU:</span> {product.sku}
-                  </p>
-                  <p>
-                    <span className="font-medium">Category:</span>{" "}
-                    {product.category}
-                  </p>
-                  <p>
-                    <span className="font-medium">Price:</span> $
-                    {product.price.toFixed(2)}
-                  </p>
-                  <p>
-                    <span className="font-medium">Stock:</span>{" "}
-                    {product.stockQuantity} {product.unit}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-2">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                    {product.name}
+                  </h3>
+                  <p className="text-xs text-gray-500 mb-3 line-clamp-2">
                     {product.description}
                   </p>
                 </div>
-                <div className="flex gap-2 pt-3">
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <span className="text-gray-500 text-xs">SKU</span>
+                    <p className="font-medium text-gray-900">{product.sku}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500 text-xs">Category</span>
+                    <p className="font-medium text-gray-900">{product.category}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500 text-xs">Price</span>
+                    <p className="font-semibold text-gray-900">${product.price.toFixed(2)}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500 text-xs">Stock</span>
+                    <p className="font-medium text-gray-900">
+                      {product.stockQuantity} {product.unit}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-2 pt-2 border-t border-gray-100">
                   <Button
                     size="sm"
                     variant="secondary"
                     onClick={() => router.push(`/products/${product._id}`)}
                     className="flex-1"
                   >
-                    View Details
+                    View
                   </Button>
                   {isAuthenticated && isAdmin && (
                     <>

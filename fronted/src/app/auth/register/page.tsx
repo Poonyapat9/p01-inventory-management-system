@@ -41,7 +41,6 @@ const RegisterPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validation
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match");
       return;
@@ -101,47 +100,45 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full">
-        <Card>
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Join StockMe
-            </h2>
-            <p className="text-sm text-gray-600">
-              Already have an account?{" "}
-              <Link
-                href="/auth/login"
-                className="font-medium text-primary-600 hover:text-primary-500 transition-colors"
-              >
-                Sign in
-              </Link>
-            </p>
-          </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12">
+      <div className="w-full max-w-md px-6">
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
+          <p className="text-gray-600">
+            Already have an account?{" "}
+            <Link
+              href="/auth/login"
+              className="text-blue-600 hover:text-blue-700 font-medium"
+            >
+              Sign in
+            </Link>
+          </p>
+        </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-8">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <Input
-              label="Full Name"
+              label="Name"
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
               required
-              placeholder="John Doe"
+              placeholder="Enter your name"
             />
 
             <Input
-              label="Email Address"
+              label="Email"
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               required
-              placeholder="your@email.com"
+              placeholder="Enter your email"
             />
 
             <Input
-              label="Telephone"
+              label="Phone"
               type="tel"
               name="tel"
               value={formData.tel}
@@ -149,7 +146,7 @@ const RegisterPage: React.FC = () => {
               required
               pattern="\d{10}"
               maxLength={10}
-              placeholder="0812345678"
+              placeholder="10-digit phone number"
             />
 
             <Select
@@ -158,7 +155,7 @@ const RegisterPage: React.FC = () => {
               value={formData.role}
               onChange={handleChange}
               required
-              placeholder="Select your role"
+              placeholder="Select role"
               options={[
                 { value: "staff", label: "Staff" },
                 { value: "admin", label: "Admin" },
@@ -173,7 +170,7 @@ const RegisterPage: React.FC = () => {
               onChange={handleChange}
               required
               minLength={6}
-              placeholder="Minimum 6 characters"
+              placeholder="At least 6 characters"
             />
 
             <Input
@@ -186,23 +183,17 @@ const RegisterPage: React.FC = () => {
               placeholder="Re-enter password"
             />
 
-            <div className="pt-2">
-              <Button
-                type="submit"
-                variant="primary"
-                size="lg"
-                className="w-full"
-                isLoading={isLoading}
-              >
-                Create Account
-              </Button>
-            </div>
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              className="w-full mt-2"
+              isLoading={isLoading}
+            >
+              Create Account
+            </Button>
           </form>
-
-          <p className="mt-6 text-center text-xs text-gray-500">
-            By creating an account, you agree to our terms and conditions
-          </p>
-        </Card>
+        </div>
       </div>
     </div>
   );
