@@ -7,7 +7,7 @@ const Product = require("../models/Product");
 exports.getRequests = async (req, res, next) => {
   try {
     let requests;
-    
+
     // Admin can see all requests, staff can only see their own
     if (req.user.role === "admin") {
       requests = await Request.find()
@@ -46,7 +46,10 @@ exports.getRequest = async (req, res, next) => {
     }
 
     // Staff can only view their own requests
-    if (req.user.role === "staff" && request.user._id.toString() !== req.user.id) {
+    if (
+      req.user.role === "staff" &&
+      request.user._id.toString() !== req.user.id
+    ) {
       return res.status(403).json({
         success: false,
         error: "Not authorized to view this request",
@@ -68,7 +71,11 @@ exports.getRequest = async (req, res, next) => {
 exports.createRequest = async (req, res, next) => {
   try {
     // Validate stock-out amount limit for staff (admin has no limit)
-    if (req.user.role === "staff" && req.body.transactionType === "stockOut" && req.body.itemAmount > 50) {
+    if (
+      req.user.role === "staff" &&
+      req.body.transactionType === "stockOut" &&
+      req.body.itemAmount > 50
+    ) {
       return res.status(400).json({
         success: false,
         error: "Stock-out amount cannot exceed 50 items",
@@ -85,7 +92,10 @@ exports.createRequest = async (req, res, next) => {
     }
 
     // For stock-out, check if sufficient stock is available
-    if (req.body.transactionType === "stockOut" && product.stockQuantity < req.body.itemAmount) {
+    if (
+      req.body.transactionType === "stockOut" &&
+      product.stockQuantity < req.body.itemAmount
+    ) {
       return res.status(400).json({
         success: false,
         error: "Insufficient stock available",
@@ -275,7 +285,7 @@ exports.approveRequest = async (req, res, next) => {
 exports.rejectRequest = async (req, res, next) => {
   try {
     const { rejectionReason } = req.body;
-    
+
     if (!rejectionReason) {
       return res.status(400).json({
         success: false,

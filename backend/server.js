@@ -39,7 +39,7 @@ const limiter = rateLimit({
   },
   skip: (req) => {
     // Skip rate limiting for health checks
-    return req.path === '/health' || req.path === '/';
+    return req.path === "/health" || req.path === "/";
   },
 });
 app.use(limiter);
