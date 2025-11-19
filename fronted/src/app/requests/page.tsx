@@ -93,6 +93,12 @@ const RequestsPage: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900">
             Transaction Requests
           </h1>
+          <button
+            onClick={() => router.push("/requests/new")}
+            className="bg-orange-300 hover:bg-orange-400 text-gray-900 px-6 py-2.5 rounded-lg font-medium transition-all"
+          >
+            Add Request
+          </button>
         </div>
 
         {loading ? (

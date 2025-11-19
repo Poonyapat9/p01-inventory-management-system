@@ -86,7 +86,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen" style={{ backgroundColor: '#FAF6D5' }}>
       <Navbar />
       <main className="container mx-auto px-4 py-8 max-w-7xl">{children}</main>
       <footer className="bg-white border-t border-stone-200 mt-auto">
