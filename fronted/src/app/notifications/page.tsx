@@ -141,7 +141,7 @@ const NotificationsPage: React.FC = () => {
             {notifications.map((notification) => (
               <div
                 key={notification._id}
-                className="bg-stone-100 rounded-lg border border-stone-200 p-6"
+                className="bg-white rounded-lg border border-stone-200 p-6"
               >
                 <div className="flex flex-col gap-3">
                   <h3 className="text-lg font-semibold text-gray-900">

@@ -61,12 +61,13 @@ const ProductsPage: React.FC = () => {
   );
 
   const isAdmin = user?.role === "admin";
+  const isStaff = user?.role === "staff";
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-3xl font-bold text-gray-900">Products</h1>
-        {isAuthenticated && isAdmin && (
+        {isAuthenticated && (isAdmin || isStaff) && (
           <button
             onClick={() => router.push("/products/new")}
             className="bg-orange-300 hover:bg-orange-400 text-gray-900 px-6 py-2.5 rounded-lg font-medium transition-all"
