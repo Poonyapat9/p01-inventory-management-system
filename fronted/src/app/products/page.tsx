@@ -127,11 +127,15 @@ const ProductsPage: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-gray-500 text-xs">Category</span>
-                    <p className="font-medium text-gray-900">{product.category}</p>
+                    <p className="font-medium text-gray-900">
+                      {product.category}
+                    </p>
                   </div>
                   <div>
                     <span className="text-gray-500 text-xs">Price</span>
-                    <p className="font-semibold text-gray-900">${product.price.toFixed(2)}</p>
+                    <p className="font-semibold text-gray-900">
+                      ${product.price.toFixed(2)}
+                    </p>
                   </div>
                   <div>
                     <span className="text-gray-500 text-xs">Stock</span>

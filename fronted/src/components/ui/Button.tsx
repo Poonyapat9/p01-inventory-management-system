@@ -23,8 +23,10 @@ const Button: React.FC<ButtonProps> = ({
       "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md focus:ring-blue-500",
     secondary:
       "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:border-gray-300 focus:ring-gray-400",
-    danger: "bg-red-600 text-white hover:bg-red-700 hover:shadow-md focus:ring-red-500",
-    success: "bg-green-600 text-white hover:bg-green-700 hover:shadow-md focus:ring-green-500",
+    danger:
+      "bg-red-600 text-white hover:bg-red-700 hover:shadow-md focus:ring-red-500",
+    success:
+      "bg-green-600 text-white hover:bg-green-700 hover:shadow-md focus:ring-green-500",
   };
 
   const sizeStyles = {
